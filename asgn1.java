@@ -38,5 +38,28 @@ class HelloWorld {
         float y=(wt)/n;
         System.out.println("Average TAT is "+x);
         System.out.println("Average WT is "+y);
+    System.out.println(" GANTT CHART IS AS FOLLOWS ");
+    int count=0;
+    // for(int i=0;i<n;i++){
+        for(int j=0;j<completion;j++){
+            System.out.print('_');
+        }
+        count=0;
+        System.out.print("\n|");
+        for(int j=0;j<completion;j++){
+            if(j==completionTime[count]){
+                count++;
+                System.out.print('|');
+            }
+            else{
+                System.out.print(' ');
+            }
+        }
+        System.out.print("|\n");
+        for(int j=0;j<completion;j++){
+            System.out.print('-');
+        }System.out.print("\n");
+    // }
     }
 }
+
