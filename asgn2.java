@@ -3,6 +3,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import javax.swing.plaf.synth.SynthStyle;
 public class asgn2 {
     public static void main(String[] args) {
         String filename = "input.txt"; // Replace 'input.txt' with the actual file path
@@ -46,7 +49,7 @@ public class asgn2 {
             String line;
             StringBuilder sentence = new StringBuilder();
             while ((line = br.readLine()) != null) {
-                System.out.print(loc+" ");
+                // System.out.print(loc+" ");
                 String[] words = line.split("\\s+");
                 ArrayList<String> lines = new ArrayList<>();
                 for (int i=0;i< words.length;i++) {
@@ -55,16 +58,30 @@ public class asgn2 {
                         String firstWord = wordsep[0].trim();
                         // String secondWord = wordsep[1].trim();
                         lines.add(firstWord);
-                        SymbolTab.put(firstWord, SymbolTab.size()+1);
+                        if(!SymbolTab.containsKey(firstWord))SymbolTab.put(firstWord, SymbolTab.size()+1);
                     }
                     else if(words[i].contains(",")){
                         String[] wordsep = words[i].split(",");
                         String firstWord = wordsep[0].trim();
                         String secondWord = wordsep[1].trim();
-                        lines.add(firstWord);
-                        lines.add(secondWord);
+                        if(firstWord!="")lines.add(firstWord);
+                        if(secondWord!="")lines.add(secondWord);
                         if(secondWord.contains("=")){
                             LitTab.put(secondWord, LitTab.size()+1);
+                        }
+                        else{
+                            try{
+                            if(Integer.parseInt(secondWord)>0  ){
+                                // System.out.print("\n Int found\n");
+                            }
+                            }  
+                            catch (Exception e) {
+                            if(!secondWord.contains("=")){SymbolTab.put(secondWord,SymbolTab.size()+1);}
+                            }
+                        }      
+                        
+                        if(!Reg.containsKey(firstWord) && !DecSt.containsKey(firstWord) && !SymbolTab.containsKey(firstWord)){
+                             SymbolTab.put(firstWord, SymbolTab.size()+1);
                         }
                         
                     }
@@ -74,7 +91,7 @@ public class asgn2 {
                         // break;
                     }
                     else{
-                        lines.add(words[i]);
+                        if(words[i]!="")lines.add(words[i]);
                     }
                 }
                 PassOne.add(lines);
@@ -83,26 +100,21 @@ public class asgn2 {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("\n");
+        String Passfile="passone.txt";
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(Passfile))) {
+            loc=0;
         for (ArrayList<String> innerList : PassOne) {
-            for (int i=0;i< innerList.size();i++) {
-                String word=innerList.get(i);
-                System.out.print(word+" ");
-            }System.out.println();
-        }
-        loc=0;
-        System.out.println("\n");
-        for (ArrayList<String> innerList : PassOne) {
-            System.out.print(loc+"  ");
+            // System.out.print(loc);
             for (int i=0;i< innerList.size();i++) {
                 String word=innerList.get(i);
                 if(ImpSt.containsKey(word)){
-                    System.out.print("   IS,"+ImpSt.get(word));
+                    bufferedWriter.write("IS,"+ImpSt.get(word)+" ");
+                    // bufferedWriter.write(line1);
                 }
 
 
                 else if(AssDir.containsKey(word)){
-                    System.out.print("   AS,"+AssDir.get(word));
+                    bufferedWriter.write("AS,"+AssDir.get(word)+" ");
                     if(word.equals("start")){
                         String lc=innerList.get(i+1);
                         int k=Integer.parseInt(lc);
@@ -115,7 +127,7 @@ public class asgn2 {
                 }
 
                 else if(DecSt.containsKey(word)){
-                    System.out.print("   DS,"+DecSt.get(word));
+                    bufferedWriter.write("DS,"+DecSt.get(word)+" ");
                     if(word.equals("ds")){
                         String lc=innerList.get(i+1);
                         int k=Integer.parseInt(lc);
@@ -125,31 +137,59 @@ public class asgn2 {
                     }
                 }
                 else if(LitTab.containsKey(word)){
-                    System.out.print("   LT,"+LitTab.get(word));
+                    bufferedWriter.write("LT,"+LitTab.get(word)+" ");
                 }
                 else if(SymbolTab.containsKey(word) && i!=0){
-                    System.out.print("   ST,"+SymbolTab.get(word));
+                    bufferedWriter.write("ST,"+SymbolTab.get(word)+" ");
                 }
                 else if(SymbolTab.containsKey(word) && i==0){
                     // System.out.print("   ST,"+SymbolTab.get(word));
                     SymbolTab.put(word,loc);
                 }
                 else if(Reg.containsKey(word)){
-                    System.out.print("   "+word+","+Reg.get(word));
+                    bufferedWriter.write(""+word+","+Reg.get(word)+" ");
                 }
 
                 else{
-                    System.out.print("   "+word+",");
+                    bufferedWriter.write(" "+word+" ");
                 }
             }
             loc++;
-            System.out.println();
-        }
-        System.out.println("\nSymbol Table");
-        for (String key : SymbolTab.keySet()) {
-            int value = SymbolTab.get(key);
-            System.out.println(key + " -> " + value);
+            // System.out.println();
+            bufferedWriter.newLine();
         }
         
+        // System.out.println("\nLiteral Table");
+        // for (String key : LitTab.keySet()) {
+        //     int value = LitTab.get(key);
+        //     System.out.println(key + " -> " + value);
+        // }
+
+        System.out.println("Data has been written to the file successfully.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing to the file: " + e.getMessage());
+        }
+        String symfile="symbol.txt";
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(symfile))) {
+            // System.out.println("\nSymbol Table");
+            for (String key : SymbolTab.keySet()) {
+                int value = SymbolTab.get(key);
+                bufferedWriter.write(key + " " + value);
+                bufferedWriter.newLine();
+            }
+    
+            System.out.println("Data has been written to the Symbol Table successfully.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing to the file: " + e.getMessage());
+        }
     }
+
 }
+/** testcase
+JOHN:   start     200
+        mover     l1,100    
+        movem     l1,X       
+l1:     mover     l2,='2'                    
+X:     ds,2           
+       end  
+ */
