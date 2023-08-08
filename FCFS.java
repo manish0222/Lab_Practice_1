@@ -1,65 +1,237 @@
-import java.util.*;
-class HelloWorld {
-    public static void main(String[] args) {
-        Scanner sc=new Scanner(System.in);
-        System.out.println("Enter the total entries");
-        int n=sc.nextInt();
-        System.out.println("n is "+n);
 
-        int arrivalTime[]=new int[n]; 
-        int burstTime[]=new int[n]; 
-        int completionTime[]=new int[n]; 
-        int TAT[]=new int[n]; 
-        int workTime[]=new int[n]; 
-        // bool use=false;
-        int completion=0;
-        float tat=0,wt=0;
-        for(int i=0;i<n;i++){
-            System.out.print("Enter arr time and burst time");
-            arrivalTime[i]=sc.nextInt();
-            burstTime[i]=sc.nextInt();
-            if(i==0){
-                completion=burstTime[i]+arrivalTime[i];
-            }
-            else{
-                completion+=burstTime[i];
-            }
-            completionTime[i]=completion;
-            TAT[i]=completionTime[i]-arrivalTime[i];
-            tat+=TAT[i];
-            workTime[i]=TAT[i]-burstTime[i];
-            wt+=workTime[i];
-        }
-        System.out.println("AT  BT  CT TAT  WT");
-        for(int i=0;i<n;i++){
-            System.out.println(arrivalTime[i]+"\t"+burstTime[i]+"\t"+completionTime[i]+"\t"+TAT[i]+"\t"+workTime[i]);
-        }
-        float x=(tat)/n;
-        float y=(wt)/n;
-        System.out.println("Average TAT is "+x);
-        System.out.println("Average WT is "+y);
-    System.out.println(" GANTT CHART IS AS FOLLOWS ");
-    int count=0;
-    // for(int i=0;i<n;i++){
-        for(int j=0;j<completion;j++){
-            System.out.print('_');
-        }
-        count=0;
-        System.out.print("\n|");
-        for(int j=0;j<completion;j++){
-            if(j==completionTime[count]){
-                count++;
-                System.out.print('|');
-            }
-            else{
-                System.out.print(' ');
-            }
-        }
-        System.out.print("|\n");
-        for(int j=0;j<completion;j++){
-            System.out.print('-');
-        }System.out.print("\n");
-    // }
-    }
-}
-
+package Program; 
+ import java.util.*; 
+  
+  
+ class FCFS{ 
+     int n; 
+     int arr[]; // arrive 
+     int bt[]; // burst 
+     int ct[]; //compeletion 
+     int tat[]; // turn around time 
+     int wt[]; // waiting time 
+     String id[]; 
+  
+     FCFS(int x){ 
+         n = x; 
+         id = new String[n]; 
+         arr = new int[n]; 
+         bt = new int[n]; 
+         ct = new int[n]; 
+         tat = new int[n]; 
+         wt = new int[n]; 
+     } 
+  
+     void getData(){ 
+         for(int i=0;i<n;i++){ 
+             Scanner in = new Scanner(System.in); 
+             System.out.println("Enter Process Id , arrival time , burst time - "); 
+             id[i] = in.nextLine(); 
+             arr[i] = in.nextInt(); 
+             bt[i] = in.nextInt(); 
+         } 
+         sortData(); 
+     } 
+  
+     void sortData(){ 
+         for(int i=0;i<n;i++){ 
+             for(int j=i+1;j<n;j++){ 
+                 if(arr[j] < arr[i]){ 
+                     String temp1 = id[i]; 
+                     id[i] = id[j]; 
+                     id[j] = temp1; 
+  
+                     int temp;         
+                     temp = arr[i]; 
+                     arr[i] = arr[j]; 
+                     arr[j] = temp; 
+  
+                     temp = bt[i]; 
+                     bt[i] = bt[j]; 
+                     bt[j] = temp; 
+                 } 
+             } 
+         } 
+     } 
+  
+     void calculation(){ 
+         for(int i=0;i<n;i++){ 
+             if(i == 0){ 
+                 ct[i] = arr[i] + bt[i]; 
+             } 
+             else{ 
+                 if(arr[i] > ct[i-1]){ 
+                     ct[i] = arr[i] + bt[i]; 
+                 } 
+                 else{ 
+                     ct[i] = ct[i-1] + bt[i]; 
+                 } 
+             } 
+             tat[i] = ct[i] - arr[i]; // turn around time 
+             wt[i] = tat[i] - bt[i]; // waiting time 
+         } 
+     } 
+  
+     void averageCalculation(){ 
+         double waitSum=0,tatSum=0; 
+         for(int i=0;i<n;i++){ 
+             waitSum = waitSum + wt[i]; 
+             tatSum = tatSum + tat[i]; 
+         } 
+         double avgWT = waitSum/n; 
+         double avgTAT = tatSum/n; 
+         System.out.println("Average Waiting time " + (avgWT)); 
+         System.out.println("Average Turn around time " + (avgTAT)); 
+     } 
+  
+     void displayTable(){ 
+         calculation(); 
+         System.out.println("ID\t\tArrival\t\tBurst\t\tComplete\tTurn\tWaiting"); 
+         for(int i=0;i<n;i++){ 
+             System.out.println(id[i]+"\t\t  "+arr[i]+"\t\t  "+bt[i]+"\t\t  "+ct[i]+"\t\t  "+tat[i]+"\t  "+wt[i]); 
+         } 
+         System.out.println(" "); 
+     } 
+  
+ } 
+  
+  
+  
+ class SJF{ 
+         // Preemptive 
+         int n; 
+     String id[]; 
+     int arr[]; // arrive 
+     int bt[]; // burst 
+     int ct[]; //compeletion 
+     int tat[]; // turn around time 
+     int wt[]; // waiting time 
+     String gt[]; // grantt chart 
+         SJF(int x){ 
+                 n = x; 
+         id = new String[n]; 
+         arr = new int[n]; 
+         bt = new int[n]; 
+         ct = new int[n]; 
+         tat = new int[n]; 
+         wt = new int[n]; 
+         gt = new String[n]; 
+         } 
+  
+         void getData(){ 
+         for(int i=0;i<n;i++){ 
+             Scanner in = new Scanner(System.in); 
+             System.out.println("Enter Process Id , arrival time , burst time - "); 
+             id[i] = in.nextLine(); 
+             arr[i] = in.nextInt(); 
+             bt[i] = in.nextInt(); 
+         } 
+         sortData(); 
+     } 
+         void sortData(){ 
+         for(int i=0;i<n;i++){ 
+             for(int j=i+1;j<n;j++){ 
+                 if(bt[j] < bt[i]){ 
+                         String temp1 = id[i]; 
+                     id[i] = id[j]; 
+                     id[j] = temp1; 
+  
+                     int temp = arr[i]; 
+                     arr[i] = arr[j]; 
+                     arr[j] = temp; 
+  
+                     temp = bt[i]; 
+                     bt[i] = bt[j]; 
+                     bt[j] = temp; 
+                 } 
+             } 
+         } 
+     } 
+  
+          void calculation(){ 
+                 for(int i=0;i<n;i++){ 
+                     if(i == 0){ 
+                         ct[i] = arr[i] + bt[i]; 
+                     } 
+                     else{ 
+                         if(arr[i] > ct[i-1]){ 
+                             ct[i] = arr[i] + bt[i]; 
+                         } 
+                         else{ 
+                             ct[i] = ct[i-1] + bt[i]; 
+                         } 
+                     } 
+                     tat[i] = ct[i] - arr[i]; // turn around time 
+                     wt[i] = tat[i] - bt[i]; // waiting time 
+                     gt[i] = id[i]; 
+                 } 
+             } 
+  
+             void averageCalculation(){ 
+                 double waitSum=0,tatSum=0; 
+                 for(int i=0;i<n;i++){ 
+                     waitSum = waitSum + wt[i]; 
+                     tatSum = tatSum + tat[i]; 
+                 } 
+                 double avgWT = waitSum/n; 
+                 double avgTAT = tatSum/n; 
+                 System.out.println("Average Waiting time " + (avgWT)); 
+                 System.out.println("Average Turn around time " + (avgTAT)); 
+             } 
+  
+             void displayTable(){ 
+                 calculation(); 
+                 System.out.println("ID\t\tArrival\t\tBurst\t\tComplete\tTurn\tWaiting/Response"); 
+                 for(int i=0;i<n;i++){ 
+                     System.out.println(id[i]+"\t\t  "+arr[i]+"\t\t  "+bt[i]+"\t\t  "+ct[i]+"\t\t  "+tat[i]+"\t  "+wt[i]); 
+                 } 
+                 System.out.print("Grant Chart - "); 
+                 for(int i=0;i<n;i++) { 
+                         System.out.print(gt[i] + " "); 
+                 } 
+                 System.out.println(" "); 
+             } 
+  
+  
+ } 
+  
+  
+  
+  
+  
+  
+ class Main{ 
+     public static void main(String[] args) { 
+      Scanner in = new Scanner(System.in); 
+      System.out.println("Enter total no of processes - "); 
+      int n = in.nextInt(); 
+      SJF p1 = new SJF(n); 
+      // FCFS p1 = new FCFS(n); 
+      char c = 'y'; 
+      while(c != 'n'){ 
+         System.out.println("------------------------------------------------------"); 
+         System.out.println("1. Alot processes"); 
+         System.out.println("2. Display Table"); 
+         System.out.println("3. Average values of wait time and turn around time"); 
+         System.out.println("------------------------------------------------------"); 
+         int ch; 
+         ch = in.nextInt(); 
+         if(ch == 1){ 
+             p1.getData(); 
+         } 
+         else if(ch == 2){ 
+             p1.displayTable(); 
+         } 
+         else if(ch == 3){ 
+             p1.averageCalculation(); 
+         } 
+         else{ 
+             System.out.println("You have entered a wrong choice."); 
+         } 
+  
+         System.out.println("Do you want to continue (y/n) - "); 
+         c = in.next().charAt(0); 
+      } 
+  
+     } 
+ }
