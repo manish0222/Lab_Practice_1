@@ -11,7 +11,7 @@ public class passtwo {
         HashMap<String,String> SymbolTab=new HashMap<>();
         HashMap<String,String> LitTab=new HashMap<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(Symfile))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(Symfile))) {  //read a file
             System.out.println("\tSymbol Table is ");
             String line;
             StringBuilder sentence = new StringBuilder();
@@ -19,6 +19,8 @@ public class passtwo {
                 String words[]=line.split("\\s+");
                 SymbolTab.put(words[0], words[1]);
             }
+
+                //               display map
             // for (Map.Entry<String, String> entry : SymbolTab.entrySet()) {
             //     String key = entry.getKey();
             //     String value = entry.getValue();
@@ -37,6 +39,7 @@ public class passtwo {
                 String words[]=line.split("\\s+");
                 LitTab.put(words[0], words[1]);
             }
+
             // for (Map.Entry<String, String> entry : LitTab.entrySet()) {
             //     String key = entry.getKey();
             //     String value = entry.getValue();
