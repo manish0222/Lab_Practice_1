@@ -1,11 +1,5 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Scanner;
+import java.util.*;
+// import java.io.*;
 
 class PageReplacementFIFO {
     private int pageSize;
@@ -119,7 +113,7 @@ class OptimalPageReplacement {
 public class PageReplacementAlgo {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("1)FIFO\n2)Optimal\n ");
+        System.out.print("1)FIFO\n2)Optimal\t ");
         int a=scanner.nextInt();
         if(a==1){
             int pageSize = 3;
@@ -153,5 +147,6 @@ public class PageReplacementAlgo {
         }
     }
 }
-//fifo need to be made menu driven
-//optimal is menu driven
+//fifo done
+//lru not done
+//optimal done
