@@ -1,5 +1,63 @@
 import java.util.*;
 // import java.io.*;
+class lru_PAGE_Replacement 
+{ 
+    // Method to find page faults using indexes 
+    static int pageFaults(int pages[], int n, int capacity) 
+    { 
+        HashSet<Integer> s = new HashSet<>(capacity); 
+        HashMap<Integer, Integer> indexes = new HashMap<>(); 
+       
+        int page_faults = 0; 
+        for (int i=0; i<n; i++) 
+        { 
+            if (s.size() < capacity) 
+            { 
+                if (!s.contains(pages[i])) 
+                { 
+                    s.add(pages[i]); 
+                    page_faults++; 
+                } 
+                indexes.put(pages[i], i); 
+            } 
+            else
+            { 
+                if (!s.contains(pages[i])) 
+                { 
+                    int lru = Integer.MAX_VALUE, val=Integer.MIN_VALUE; 
+                    Iterator<Integer> itr = s.iterator(); 
+                      
+                    while (itr.hasNext()) { 
+                        int temp = itr.next(); 
+                        if (indexes.get(temp) < lru) 
+                        { 
+                            lru = indexes.get(temp); 
+                            val = temp; 
+                        } 
+                    } 
+                  
+                    s.remove(val); 
+                    indexes.remove(val); 
+                    s.add(pages[i]); 
+                    page_faults++; 
+                } 
+       
+                indexes.put(pages[i], i); 
+            }
+
+            // Display the queue and pages at each iteration
+            System.out.print("Iteration " + (i + 1) + ": ");
+            System.out.print("Pages: {");
+            for (int page : s) {
+                System.out.print(page + " ");
+            }
+            System.out.print("}\n");
+        } 
+
+        return page_faults; 
+    }
+}
+
 
 class PageReplacementFIFO {
     private int pageSize;
@@ -45,7 +103,7 @@ class PageReplacementFIFO {
     }
 }
 class OptimalPageReplacement {
-    public static void simulateOptimalPageReplacement(int numFrames, int[] pageReferences) {
+    public void simulateOptimalPageReplacement(int numFrames, int[] pageReferences) {
         List<Integer> frames = new ArrayList<>();
         Map<Integer, Integer> nextOccurrence = new HashMap<>();
 
@@ -110,10 +168,10 @@ class OptimalPageReplacement {
 }
 
 
-public class PageReplacementAlgo {
+class PageReplacementAlgo {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("1)FIFO\n2)Optimal\t ");
+        System.out.print("1)FIFO\n2)Optimal\n3)LRU \t ");
         int a=scanner.nextInt();
         if(a==1){
             int pageSize = 3;
@@ -145,8 +203,14 @@ public class PageReplacementAlgo {
         OptimalPageReplacement obj=new OptimalPageReplacement();
             obj.simulateOptimalPageReplacement(numFrames, pageReferences);
         }
+        else if(a==3){
+            lru_PAGE_Replacement obj=new lru_PAGE_Replacement();
+             int pages[] = {7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2}; 
+            int capacity = 3; 
+        System.out.println("Total page faults: " + obj.pageFaults(pages, pages.length, capacity)); 
+        }
     }
 }
 //fifo done
-//lru not done
+//lru done
 //optimal done
